@@ -64,3 +64,70 @@ CREATE TABLE IF NOT EXISTS fact_performance (
     risk_grade TEXT,
     FOREIGN KEY (amfi_code) REFERENCES dim_fund(amfi_code)
 );
+
+CREATE TABLE IF NOT EXISTS fact_aum (
+    aum_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date DATE NOT NULL,
+    fund_house TEXT NOT NULL,
+    aum_lakh_crore REAL,
+    aum_crore REAL NOT NULL,
+    num_schemes INTEGER,
+    UNIQUE(date, fund_house)
+);
+
+CREATE TABLE IF NOT EXISTS fact_category_inflows (
+    inflow_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    month DATE NOT NULL,
+    category TEXT NOT NULL,
+    net_inflow_crore REAL NOT NULL,
+    UNIQUE(month, category)
+);
+
+CREATE TABLE IF NOT EXISTS fact_folio_count (
+    folio_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    month DATE NOT NULL,
+    total_folios_crore REAL,
+    equity_folios_crore REAL,
+    debt_folios_crore REAL,
+    hybrid_folios_crore REAL,
+    others_folios_crore REAL,
+    UNIQUE(month)
+);
+
+CREATE TABLE IF NOT EXISTS fact_holdings (
+    holding_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    amfi_code TEXT NOT NULL,
+    stock_symbol TEXT,
+    stock_name TEXT,
+    sector TEXT,
+    weight_pct REAL,
+    market_value_cr REAL,
+    current_price_inr REAL,
+    portfolio_date DATE NOT NULL,
+    FOREIGN KEY (amfi_code) REFERENCES dim_fund(amfi_code),
+    UNIQUE(amfi_code, stock_symbol, portfolio_date)
+);
+
+CREATE TABLE IF NOT EXISTS dim_index (
+    index_name TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS fact_index_values (
+    index_value_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date DATE NOT NULL,
+    index_name TEXT NOT NULL,
+    close_value REAL NOT NULL,
+    FOREIGN KEY (index_name) REFERENCES dim_index(index_name),
+    UNIQUE(date, index_name)
+);
+
+CREATE TABLE IF NOT EXISTS fact_sip_inflows (
+    sip_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    month DATE NOT NULL,
+    sip_inflow_crore REAL,
+    active_sip_accounts_crore REAL,
+    new_sip_accounts_lakh REAL,
+    sip_aum_lakh_crore REAL,
+    yoy_growth_pct REAL,
+    UNIQUE(month)
+);
